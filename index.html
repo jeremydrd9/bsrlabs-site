@@ -130,6 +130,26 @@
   <script>
     document.getElementById('y').textContent = new Date().getFullYear();
 
+    /* mailto: opens the default mail app. If nothing happens (no mail app set up on desktop), fall back to a Gmail compose window. */
+    (function () {
+      var email = 'contact@bsrlabs.xyz';
+      var mobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+      document.querySelectorAll('a[href^="mailto:"]').forEach(function (a) {
+        a.addEventListener('click', function () {
+          if (mobile) return;
+          var left = false;
+          function onBlur() { left = true; }
+          window.addEventListener('blur', onBlur, { once: true });
+          setTimeout(function () {
+            window.removeEventListener('blur', onBlur);
+            if (!left && !document.hidden) {
+              window.open('https://mail.google.com/mail/?view=cm&fs=1&to=' + encodeURIComponent(email), '_blank', 'noopener');
+            }
+          }, 900);
+        });
+      });
+    })();
+
     (function () {
       var btn = document.getElementById('copy');
       var live = document.getElementById('live');
